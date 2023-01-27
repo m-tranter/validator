@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <title>Fragment validator</title>
+  </head>
+  <body>
+
+    <div class="container">
+      <style type="text/css" scoped>
+textarea,
+input,
+label {
+  display: block;
+}
+      textarea {
+        resize: none;
+      }
+      .inline {
+        display: inline;
+      }
+      #status {
+        width: 15rem;
+        background: wheat;
+      }
+      .code, #code {
+        font-family: monospace;
+      }
+      </style>
+    <h1>Fragment validator</h1>
+    <p class="mb-0">Example regular expression matches 4 capital letters followed by 5 digits:</p>
+    <p class="code">^[A-Z]{4}[0-9]{5}$</p>
+    <label for="regExp">Regular expression</label>
+    <input id="regExp" size="30" />
+    <label class="mt-2" for="error">Error message</label>
+    <input id="error" size="30" />
+    <hr />
+    <label for="test">Sample input</label>
+    <input id="test" class="inline" size="20"></input>
+    <button class="inline" id="check">Check</button>
+    <p class="my-1">Output</p>
+    <div>
+      <p id="status">&nbsp;</p>
+    </div>
+    <hr />
+    <div>
+      <p class="mb-1">Code 
+      <button class="mt-2 ms-2" id="copy" type="button">Copy</button>
+      </p>
+      <textarea cols=60 rows=7 id="code" readonly></textarea>
+    </div>
+    <script>
+      const regExp = document.getElementById("regExp");
+      const error = document.getElementById("error");
+      const copyBtn = document.getElementById("copy");
+      const checkBtn = document.getElementById("check");
+      const test = document.getElementById("test");
+      const code = document.getElementById("code");
+      const status = document.getElementById("status");
+      const input = document.getElementById("test");
+      let rx;
+      let err = "Invalid input";
+ 
+      const updateRx = () => {
+        rx = regExp.value.trim();
+        if (rx.startsWith('/')) {
+          rx = rx.slice(1);
+        }
+        if (rx.endsWith('/')) {
+          rx = rx.slice(0, rx.length -1);
+        }
+        updateCode();
+      };
+      
+      const updateErr = () => {
+        err = error.value;
+        updateCode();
+      };
+
+      
+      const updateCode = () => {
+        code.value = `return {
+      main: function(obj) {
+          return /${rx}/.test(obj.get_value())
+          ? true
+          : "${err}"
+      }
+}`;
+      };
+      
+      const check = () => {
+        status.innerText = new RegExp(rx).test(input.value) ? "true" : error.value;
+      };
+
+
+      const copy = ()  => {
+        code.select();
+        code.style.background = "LightGreen";
+        setTimeout(() => code.style.background = "White", 500);
+        navigator.clipboard.writeText(code.value);
+        window.getSelection().removeAllRanges();
+      };
+
+      
+      error.onchange = updateErr;
+      regExp.onchange = updateRx;
+      copyBtn.addEventListener("click", copy);
+      checkBtn.addEventListener("click", check);
+      input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          check();
+        }
+      });
+    </script>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
