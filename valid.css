@@ -1,0 +1,19 @@
+textarea,
+input,
+label {
+  display: block;
+}
+textarea {
+  resize: none;
+}
+.inline {
+  display: inline;
+}
+#status {
+  width: 15rem;
+  background: wheat;
+}
+.code,
+#code {
+  font-family: monospace;
+}
